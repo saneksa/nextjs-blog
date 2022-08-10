@@ -1,0 +1,26 @@
+.posts_wrapper {
+  margin: 12px;
+}
+
+.post_wrapper {
+  margin-top: 16px;
+  margin-bottom: 16px;
+  border: 1px solid white;
+}
+
+.post_wrapper:hover {
+  cursor: pointer;
+  border: 1px solid red;
+}
+
+.post_title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.post_body {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
