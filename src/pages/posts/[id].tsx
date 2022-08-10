@@ -3,9 +3,15 @@ import Date from "../../components/date";
 import utilStyles from "../../styles/utils.module.css";
 
 import Layout from "../../components/layout";
-import { getAllPostIds, getPostData } from "../../lib/posts";
+import { getAllPostIds, getPostData, TPostsData } from "../../lib/posts";
+import { GetStaticPaths, GetStaticProps } from "next";
+import { FC } from "react";
 
-export default function Post({ postData }) {
+interface IPostProps {
+  postData: TPostsData;
+}
+
+const Post: FC<IPostProps> = ({ postData }) => {
   return (
     <Layout>
       <Head>
@@ -21,23 +27,31 @@ export default function Post({ postData }) {
       </article>
     </Layout>
   );
-}
+};
 
-export async function getStaticPaths() {
+export default Post;
+
+export const getStaticPaths: GetStaticPaths = async () => {
   const paths = await getAllPostIds();
 
   return {
     paths,
     fallback: false,
   };
-}
+};
 
-export async function getStaticProps({ params }) {
-  const postData = await getPostData(params.id);
+export const getStaticProps: GetStaticProps<
+  IPostProps,
+  { id: string }
+> = async ({ params }) => {
+  const postData =
+    params?.id != null
+      ? await getPostData(params.id)
+      : ({} as IPostProps["postData"]);
 
   return {
     props: {
       postData,
     },
   };
-}
+};

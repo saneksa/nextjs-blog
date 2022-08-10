@@ -1,11 +1,17 @@
+import { GetStaticProps } from "next";
 import Head from "next/head";
 import Link from "next/link";
+import { FC } from "react";
 import Date from "../components/date";
 import Layout, { siteTitle } from "../components/layout";
-import { getSortedPostsData } from "../lib/posts";
+import { getSortedPostsData, TAllPostsData } from "../lib/posts";
 import utilStyles from "../styles/utils.module.css";
 
-export default function Home({ allPostsData }) {
+interface IHomeProps {
+  allPostsData: TAllPostsData;
+}
+
+const Home: FC<IHomeProps> = ({ allPostsData }) => {
   return (
     <Layout home>
       <Head>
@@ -33,9 +39,11 @@ export default function Home({ allPostsData }) {
       </section>
     </Layout>
   );
-}
+};
 
-export async function getStaticProps() {
+export default Home;
+
+export const getStaticProps: GetStaticProps<IHomeProps> = async () => {
   const allPostsData = await getSortedPostsData();
 
   return {
@@ -43,4 +51,4 @@ export async function getStaticProps() {
       allPostsData,
     },
   };
-}
+};

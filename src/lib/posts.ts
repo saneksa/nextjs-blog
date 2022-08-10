@@ -6,11 +6,24 @@ import html from "remark-html";
 
 const postsDirectory = path.join(process.cwd(), "src", "posts");
 
+export type TAllPostsData = {
+  id: string;
+  content?: string;
+  title: string;
+  date: string;
+}[];
+
+export type TPostsData = TAllPostsData[number] & { contentHtml: string };
+
+type TMatterResult = matter.GrayMatterFile<string> & {
+  data: Omit<TAllPostsData[number], "id" | "content">;
+};
+
 export async function getSortedPostsData() {
   // Get file names under /posts
   const fileNames = await fs.readdir(postsDirectory);
 
-  const allPostsData = [];
+  const allPostsData: TAllPostsData = [];
 
   for await (const fileName of fileNames) {
     // Remove ".md" from file name to get id
@@ -21,7 +34,7 @@ export async function getSortedPostsData() {
     const fileContents = await fs.readFile(fullPath, "utf8");
 
     // Use gray-matter to parse the post metadata section
-    const matterResult = matter(fileContents);
+    const matterResult = matter(fileContents) as TMatterResult;
 
     allPostsData.push({
       id,
@@ -52,11 +65,11 @@ export async function getAllPostIds() {
   }));
 }
 
-export async function getPostData(id) {
+export async function getPostData(id: string): Promise<TPostsData> {
   const fullPath = path.join(postsDirectory, `${id}.md`);
   const fileContent = await fs.readFile(fullPath, "utf8");
 
-  const matterResult = matter(fileContent);
+  const matterResult = matter(fileContent) as TMatterResult;
 
   const processedContent = await remark()
     .use(html)
